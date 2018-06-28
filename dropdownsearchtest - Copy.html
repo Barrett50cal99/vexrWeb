@@ -1,0 +1,177 @@
+//this is the HTML, CSS, and Javascript file for the attackgraph search engine. 
+//collaborators: Jess Peraza, and Barrett Barnard
+//Code Sources: 1- CodePen created by silvester Bistrovic, "fast live filter demo".
+//version 1.0 date last edited: 6/28/18
+
+<style>
+.fast-search {
+  margin-top: 120px;
+  padding: 20px;
+  color: DodgerBlue;
+  background: #C8C8C8
+  //linear-gradient(to bottom left, AliceBlue 10%, DodgerBlue);
+
+  &.fast-search-opposite {
+    background: linear-gradient(to bottom right, AliceBlue 10%, DodgerBlue);
+  }
+}
+
+.fast-search-title
+{
+  font-size: 24px;
+  text-shadow: 0 1px 0 White;
+  margin: 0 0 20px;
+}
+
+.fast-search-input
+{
+  margin-bottom: 20px;
+  border-radius: 0;
+}
+
+.fast-search-opposite
+{
+  .fast-search-input
+  {
+    margin-bottom: 0;
+    border-radius: 0;
+  }
+}
+
+.fast-search-list
+{
+  margin-bottom: 0;
+}
+
+.fast-search-list-item
+{
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.fast-search-list-item:first-child
+{
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.fast-search-list-item:last-child
+{
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+</style>
+
+</html>
+<head>
+<link rel = "stylesheet" type = "text/css" href = "CSS.css"/>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="fast-search">
+        <h1 class="text-center fast-search-title">Types of cars</h1>
+        <input class="form-control fast-search-input" id="search_input" placeholder="Type to filter">
+        <ul class="list-group fast-search-list" id="search_list">
+          <li class="list-group-item fast-search-list-item">toyota</li>
+          <li class="list-group-item fast-search-list-item">chevrolet</li>
+          <li class="list-group-item fast-search-list-item">Ford</li>
+          <li class="list-group-item fast-search-list-item">farrari</li>
+		  <li class="list-group-item fast-search-list-item">mazda</li>
+          <li class="list-group-item fast-search-list-item">mercedes</li>
+          <li class="list-group-item fast-search-list-item">jeep</li>
+          <li class="list-group-item fast-search-list-item">honda</li>
+		  <li class="list-group-item fast-search-list-item">nissan</li>
+          <li class="list-group-item fast-search-list-item">jaguire</li>
+          <li class="list-group-item fast-search-list-item">audi</li>
+          <li class="list-group-item fast-search-list-item">mazzeratti</li>
+		  <li class="list-group-item fast-search-list-item">chrysler</li>
+          <li class="list-group-item fast-search-list-item">Acura>
+          <li class="list-group-item fast-search-list-item">BMW</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous">
+</script>
+<script src="jquery-1.6.4.min.js"></script>
+<script src="jquery.fastLiveFilter.js"></script>
+<script>
+	$(function() {
+		$('#search_input').fastLiveFilter('#search_list');
+	});
+</script>
+<script>
+  jQuery.fn.fastLiveFilter = function(list, options) {
+	options = options || {};
+	list = jQuery(list);
+	var input = this;
+	var lastFilter = '';
+	var timeout = options.timeout || 0;
+	var callback = options.callback || function() {};
+	var pType = options.type || "filter";
+
+	var keyTimeout;
+	var lis = list.children();
+	var len = lis.length;
+	var oldDisplay = len > 0 ? lis[0].style.display : "block";
+	callback(len);
+  if(pType === "search") {
+    for (var i = 0; i < len; i++) {
+			lis[i].style.display = "none";
+    }
+  }
+
+	input.change(function() {
+
+		var filter = input.val().toLowerCase();
+
+		var li, innerText;
+		var numShown = 0;
+		for (var i = 0; i < len; i++) {
+			li = lis[i];
+			innerText = !options.selector ?
+				(li.textContent || li.innerText || "") :
+				$(li).find(options.selector).text();
+
+      if(pType !== "search" || filter.trim().length > 0) {
+				if (innerText.toLowerCase().indexOf(filter) >= 0) {
+					if (li.style.display == "none") {
+						li.style.display = oldDisplay;
+					}
+					numShown++;
+				} else {
+					if (li.style.display != "none") {
+						li.style.display = "none";
+					}
+				}
+      } else {
+				li.style.display = "none";
+			}
+		}
+		callback(numShown);
+		// var endTime = new Date().getTime();
+		// console.log('Search for ' + filter + ' took: ' + (endTime - startTime) + ' (' + numShown + ' results)');
+		return false;
+	}).keydown(function() {
+		clearTimeout(keyTimeout);
+		keyTimeout = setTimeout(function() {
+			if( input.val() === lastFilter ) return;
+			lastFilter = input.val();
+			input.change();
+		}, timeout);
+	});
+	return this; // maintain jQuery chainability
+};
+
+$('#filter_input').fastLiveFilter('#filter_list');
+$('#search_input').fastLiveFilter('#search_list', {type: "search"});
+</script>
+</html>
